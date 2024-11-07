@@ -1,81 +1,87 @@
 import java.util.Scanner;
 
-class Campeao {
-    private String nome;
-    private int vida;
-    private int ataque;
-    private int armadura;
-
-    public Campeao(String nome, int vida, int ataque, int armadura) {
-        this.nome = nome;
-        this.vida = vida;
-        this.ataque = ataque;
-        this.armadura = armadura;
+// Classe Champion para representar um campeão
+class Champion {
+    private String name;
+    private int life;
+    private final int attack;
+    private final int armor;
+    
+    public Champion(String name, int life, int attack, int armor) {
+        this.name = name;
+        this.life = life;
+        this.attack = attack;
+        this.armor = armor;
     }
-
-    public void takeDamage(int dano) {
-        int danoRecebido = Math.max(1, dano - this.armadura);
-        this.vida = Math.max(0, this.vida - danoRecebido);
+    
+    public void takeDamage(Champion attacker) {
+        int damage = Math.max(1, attacker.attack - this.armor);
+        this.life = Math.max(0, this.life - damage);
     }
-
+    
     public String status() {
-        return this.vida > 0 ? this.nome + ": " + this.vida + " de vida" : this.nome + ": 0 de vida (morreu)";
+        if (this.life == 0) {
+            return this.name + ": " + this.life + " de vida (morreu)";
+        }
+        return this.name + ": " + this.life + " de vida";
     }
-
-    public int getAtaque() {
-        return this.ataque;
-    }
-
-    public boolean estaVivo() {
-        return this.vida > 0;
+    
+    public boolean isAlive() {
+        return this.life > 0;
     }
 }
 
-public class Combate {
+// Classe principal com o programa
+public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
+        
+        // Leitura dos dados do primeiro campeão
         System.out.println("Digite os dados do primeiro campeão:");
         System.out.print("Nome: ");
-        String nome1 = sc.nextLine();
+        String name1 = sc.nextLine();
         System.out.print("Vida inicial: ");
-        int vida1 = sc.nextInt();
+        int life1 = sc.nextInt();
         System.out.print("Ataque: ");
-        int ataque1 = sc.nextInt();
+        int attack1 = sc.nextInt();
         System.out.print("Armadura: ");
-        int armadura1 = sc.nextInt();
-
+        int armor1 = sc.nextInt();
+        
+        sc.nextLine(); // Consumir quebra de linha pendente
+        
+        // Leitura dos dados do segundo campeão
         System.out.println("Digite os dados do segundo campeão:");
-        sc.nextLine(); // Consumir o resto da linha
         System.out.print("Nome: ");
-        String nome2 = sc.nextLine();
+        String name2 = sc.nextLine();
         System.out.print("Vida inicial: ");
-        int vida2 = sc.nextInt();
+        int life2 = sc.nextInt();
         System.out.print("Ataque: ");
-        int ataque2 = sc.nextInt();
+        int attack2 = sc.nextInt();
         System.out.print("Armadura: ");
-        int armadura2 = sc.nextInt();
-
+        int armor2 = sc.nextInt();
+        
+        // Criação dos campeões
+        Champion champion1 = new Champion(name1, life1, attack1, armor1);
+        Champion champion2 = new Champion(name2, life2, attack2, armor2);
+        
+        // Leitura do número de turnos
         System.out.print("Quantos turnos você deseja executar? ");
-        int turnos = sc.nextInt();
-
-        Campeao campeao1 = new Campeao(nome1, vida1, ataque1, armadura1);
-        Campeao campeao2 = new Campeao(nome2, vida2, ataque2, armadura2);
-
-        for (int i = 1; i <= turnos; i++) {
-            if (!campeao1.estaVivo() || !campeao2.estaVivo()) {
-                break;
-            }
-
-            campeao1.takeDamage(campeao2.getAtaque());
-            campeao2.takeDamage(campeao1.getAtaque());
-
+        int n = sc.nextInt();
+        
+        // Execução dos turnos
+        for (int i = 1; i <= n && champion1.isAlive() && champion2.isAlive(); i++) {
+            // Ambos os campeões se atacam
+            champion1.takeDamage(champion2);
+            champion2.takeDamage(champion1);
+            
+            // Mostra o resultado do turno
             System.out.println("Resultado do turno " + i + ":");
-            System.out.println(campeao1.status());
-            System.out.println(campeao2.status());
+            System.out.println(champion1.status());
+            System.out.println(champion2.status());
         }
-
-        System.out.println("\n### FIM DO COMBATE ###");
+        
+        System.out.println("### FIM DO COMBATE ###");
+        
         sc.close();
     }
 }
